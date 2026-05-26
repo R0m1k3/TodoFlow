@@ -8,13 +8,15 @@ services:
     container_name: todoflow-api-server
     restart: always
     ports:
-      - "8000:8000"
+      - "8299:8000"
     volumes:
       - todoflow_db_volume:/app/data
     environment:
       - DATABASE_URL=sqlite:///app/data/todo.db
       - API_KEYS_RAW=widget-token-secure-789,ai-agent-token-secure-101
       - ENV=production
+    networks:
+      - nginx_default
     logging:
       driver: "json-file"
       options:
@@ -23,3 +25,8 @@ services:
 
 volumes:
   todoflow_db_volume:
+
+networks:
+  nginx_default:
+    external: true
+

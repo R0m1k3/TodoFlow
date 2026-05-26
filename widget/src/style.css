@@ -63,17 +63,19 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: grab; /* Indique qu'on peut faire glisser le widget */
 }
 
-.widget-header:active {
-  cursor: grabbing;
-}
-
-.header-left {
+.header-drag-zone {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  height: 100%;
+  cursor: grab;
+}
+
+.header-drag-zone:active {
+  cursor: grabbing;
 }
 
 /* Indicateur d'état connecté à l'API */

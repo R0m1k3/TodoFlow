@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Si exécuté hors de Tauri (ex: navigateur classique), masquer les boutons de fenêtre
     btnMinimize.style.display = "none";
     btnClose.style.display = "none";
-    document.querySelector(".setting-toggle").style.display = "none"; // Cacher l'autostart
+    inputAutostart.closest(".setting-toggle").style.display = "none"; // Cacher l'autostart
   }
   
   // Événement d'ajout de tâche

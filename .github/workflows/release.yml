@@ -43,8 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__
-          releaseName: 'TodoFlow v__VERSION__'
+          tagName: ${{ github.ref_name }}
+          releaseName: 'TodoFlow ${{ github.ref_name }}'
           releaseBody: 'Release generated automatically by GitHub Actions.'
           releaseDraft: true
           prerelease: false

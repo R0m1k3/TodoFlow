@@ -89,7 +89,7 @@ fn main() {
                     window.hide().unwrap();
                 } else {
                     window.show().unwrap();
-                    window.focus().unwrap();
+                    window.set_focus().unwrap();
                 }
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
@@ -102,7 +102,7 @@ fn main() {
                         window.hide().unwrap();
                     } else {
                         window.show().unwrap();
-                        window.focus().unwrap();
+                        window.set_focus().unwrap();
                     }
                 }
                 _ => {}

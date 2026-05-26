@@ -58,9 +58,11 @@
       {
         "fullscreen": false,
         "height": 520,
-        "resizable": false,
+        "resizable": true,
         "title": "TodoFlow",
         "width": 340,
+        "minWidth": 280,
+        "minHeight": 400,
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": false,

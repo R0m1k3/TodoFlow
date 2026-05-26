@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: todoflow-api-server
+    user: "root"
     restart: always
     ports:
       - "8299:8000"

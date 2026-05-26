@@ -34,7 +34,6 @@
         "entitlements": null,
         "exceptionDomain": "",
         "frameworks": [],
-        "providerBundleIdentifier": null,
         "signingIdentity": null
       },
       "resources": [],

@@ -573,3 +573,58 @@ body {
   background: hsl(250, 85%, 58%);
   box-shadow: 0 0 10px var(--accent-indigo-glow);
 }
+
+/* --- BOUTONS ACTIONS DES TÂCHES (MODIFIER / SUPPRIMER) --- */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  margin-right: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.task-card:hover .task-actions {
+  opacity: 1;
+}
+
+.btn-task-action {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-task-action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.btn-task-action.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: hsl(0, 80%, 65%);
+}
+
+.btn-task-action svg {
+  pointer-events: none; /* Évite d'interférer avec le clic */
+}
+
+/* Style de l'input d'édition en ligne */
+.task-edit-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--accent-indigo);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 2px 6px;
+  width: 100%;
+  outline: none;
+  box-shadow: 0 0 8px var(--accent-indigo-glow);
+}

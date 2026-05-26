@@ -12,9 +12,9 @@ services:
     volumes:
       - todoflow_db_volume:/app/data
     environment:
-      - DATABASE_URL=sqlite:///app/data/todo.db
-      - API_KEYS_RAW=widget-token-secure-789,ai-agent-token-secure-101
-      - ENV=production
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///app/data/todo.db}
+      - API_KEYS_RAW=${API_KEYS_RAW:-widget-token-secure-789,ai-agent-token-secure-101}
+      - ENV=${ENV:-production}
     networks:
       - nginx_default
     logging:

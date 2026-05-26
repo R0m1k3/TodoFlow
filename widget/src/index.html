@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TodoFlow</title>
+  <!-- Importation de la police Google Fonts Inter pour une typographie premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="todo-widget">
+    <!-- Barre supérieure personnalisée avec zone de déplacement pour Tauri -->
+    <header class="widget-header" data-tauri-drag-region>
+      <div class="header-left" data-tauri-drag-region>
+        <span class="status-indicator disconnected" id="connection-status" title="Déconnecté"></span>
+        <h1 class="widget-title" data-tauri-drag-region>TodoFlow</h1>
+      </div>
+      <div class="header-right">
+        <!-- Boutons de contrôle de la fenêtre (indispensables en mode sans bordure) -->
+        <button class="win-btn" id="btn-minimize" title="Réduire">
+          <svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="5.5" width="8" height="1" fill="currentColor"/></svg>
+        </button>
+        <button class="win-btn" id="btn-settings" title="Paramètres">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="win-btn btn-close" id="btn-close" title="Fermer (Masquer)">
+          <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 2.5 L9.5 9.5 M9.5 2.5 L2.5 9.5" stroke="currentColor" stroke-width="1.2"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Indicateur de progression des tâches -->
+    <div class="progress-container">
+      <div class="progress-bar" id="task-progress" style="width: 0%"></div>
+    </div>
+
+    <!-- Zone de contenu principal -->
+    <div class="widget-body">
+      <!-- Formulaire d'ajout rapide (Création directe via le widget) -->
+      <form id="add-task-form" class="add-task-form">
+        <input type="text" id="task-input" placeholder="Ajouter une tâche..." required maxlength="100">
+        <button type="submit" class="btn-add" title="Ajouter la tâche">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </form>
+
+      <!-- Liste des Tâches -->
+      <main class="tasks-list" id="tasks-list">
+        <!-- Rempli dynamiquement en JS -->
+        <div class="empty-state">
+          <p>Aucune tâche disponible</p>
+          <span class="empty-subtext">Configurez l'API dans les paramètres</span>
+        </div>
+      </main>
+    </div>
+
+    <!-- Panneau de Paramètres (Glisse depuis le bas) -->
+    <div class="settings-panel" id="settings-panel">
+      <div class="settings-header">
+        <h2>Configuration</h2>
+        <button class="btn-icon-close" id="btn-settings-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-group">
+          <label for="setting-api-url">URL du Serveur API</label>
+          <input type="url" id="setting-api-url" placeholder="http://localhost:8000" required>
+        </div>
+
+        <div class="setting-group">
+          <label for="setting-api-key">Clé API (X-API-Key)</label>
+          <input type="password" id="setting-api-key" placeholder="widget-token-secure-789" required>
+        </div>
+
+        <div class="setting-toggle">
+          <label class="switch-container">
+            <span class="switch-label">Toujours au premier plan</span>
+            <input type="checkbox" id="setting-always-on-top">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-toggle">
+          <label class="switch-container">
+            <span class="switch-label">Lancer au démarrage</span>
+            <input type="checkbox" id="setting-autostart">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+
+        <button class="btn-save" id="btn-save-settings">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intégration de l'API Tauri pour la communication inter-processus -->
+  <script>
+    // Import dynamique pour supporter l'exécution dans le navigateur pendant le dév
+    window.__TAURI__ = window.__TAURI__ || null;
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

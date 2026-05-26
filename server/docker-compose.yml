@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  todo-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: todoflow-api-server
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - todoflow_db_volume:/app/data
+    environment:
+      - DATABASE_URL=sqlite:///app/data/todo.db
+      - API_KEYS_RAW=widget-token-secure-789,ai-agent-token-secure-101
+      - ENV=production
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  todoflow_db_volume:

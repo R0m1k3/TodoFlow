@@ -1,0 +1,573 @@
+/* --- SYSTÈME DE DESIGN & TOKENS --- */
+:root {
+  --bg-widget: rgba(18, 22, 33, 0.70);
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.07);
+  --border-widget: 1px solid rgba(255, 255, 255, 0.09);
+  --border-card: 1px solid rgba(255, 255, 255, 0.05);
+  
+  /* Couleurs thématiques HSL */
+  --accent-indigo: hsl(250, 85%, 65%);
+  --accent-indigo-glow: rgba(99, 102, 241, 0.3);
+  --accent-mint: hsl(165, 80%, 42%);
+  --accent-mint-glow: rgba(16, 185, 129, 0.15);
+  --accent-amber: hsl(38, 95%, 55%);
+  --accent-amber-glow: rgba(245, 158, 11, 0.15);
+  
+  /* Textes */
+  --text-primary: hsl(220, 20%, 96%);
+  --text-secondary: hsl(220, 12%, 68%);
+  --text-muted: rgba(241, 243, 249, 0.45);
+}
+
+/* Réinitialisation de base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none; /* Évite la sélection de texte accidentelle pour un widget */
+}
+
+body {
+  background: transparent; /* Indispensable pour la transparence de la fenêtre Tauri */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- LE CONTAINER DU WIDGET (GLASSMORPHISM PREMIUM) --- */
+.todo-widget {
+  width: 340px;
+  height: 520px;
+  background: var(--bg-widget);
+  backdrop-filter: blur(30px) saturate(125%);
+  -webkit-backdrop-filter: blur(30px) saturate(125%);
+  border-radius: 16px;
+  border: var(--border-widget);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.35),
+    0 1px 0px 0px rgba(255, 255, 255, 0.12) inset;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* --- HEADER DU WIDGET --- */
+.widget-header {
+  padding: 16px 16px 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: grab; /* Indique qu'on peut faire glisser le widget */
+}
+
+.widget-header:active {
+  cursor: grabbing;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Indicateur d'état connecté à l'API */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+}
+
+.status-indicator.connected {
+  background-color: var(--accent-mint);
+  box-shadow: 0 0 8px var(--accent-mint);
+}
+
+.status-indicator.disconnected {
+  background-color: hsl(0, 80%, 60%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.widget-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  opacity: 0.95;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10; /* Assure le clic par-dessus la zone de drag */
+}
+
+/* Boutons de contrôle style Windows */
+.win-btn {
+  background: transparent;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.win-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.win-btn.btn-close:hover {
+  background: hsl(0, 75%, 50%);
+  color: #fff;
+}
+
+/* --- INDICATEUR DE PROGRESSION --- */
+.progress-container {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-indigo), var(--accent-mint));
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- ZONE DE CORPS --- */
+.widget-body {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* Formulaire d'ajout de tâche */
+.add-task-form {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 4px 6px;
+  transition: border-color 0.3s;
+}
+
+.add-task-form:focus-within {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.add-task-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 6px;
+  font-family: inherit;
+}
+
+.add-task-form input::placeholder {
+  color: rgba(241, 243, 249, 0.35);
+}
+
+.btn-add {
+  background: var(--accent-indigo);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-add:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--accent-indigo-glow);
+}
+
+.btn-add svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-add:hover svg {
+  transform: rotate(90deg);
+}
+
+/* --- LISTE DES TÂCHES --- */
+.tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Personnalisation Scrollbar */
+.tasks-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tasks-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tasks-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+/* --- CARTE DE TÂCHE INDIVIDUELLE --- */
+.task-card {
+  background: var(--bg-card);
+  border: var(--border-card);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  opacity: 1;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Checkbox personnalisée */
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.custom-checkbox:hover {
+  border-color: var(--accent-indigo);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* Checkbox cochée (Terminé) */
+.custom-checkbox.checked {
+  background: linear-gradient(135deg, hsl(165, 80%, 42%), hsl(165, 80%, 32%));
+  border-color: transparent;
+  animation: checkboxPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.custom-checkbox.checked svg {
+  display: block;
+  color: white;
+}
+
+.custom-checkbox svg {
+  display: none;
+}
+
+@keyframes checkboxPop {
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Contenu textuel de la carte */
+.task-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0; /* Permet le troncage correct du texte */
+}
+
+.task-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.3s;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.task-date {
+  font-size: 9.5px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* --- BADGES DE STATUT --- */
+.status-badge {
+  font-size: 8.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 7px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.status-badge.in-progress {
+  background: var(--accent-amber-glow);
+  color: var(--accent-amber);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  cursor: pointer;
+}
+
+.status-badge.todo {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+}
+
+.status-badge.done {
+  background: var(--accent-mint-glow);
+  color: var(--accent-mint);
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+/* --- DESIGN DES TÂCHES TERMINÉES (ANIMÉ) --- */
+.task-card.completed {
+  opacity: 0.5;
+}
+
+.task-card.completed .task-title {
+  color: var(--text-muted);
+}
+
+.task-card.completed .task-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 52%;
+  width: 100%;
+  height: 1px;
+  background: var(--text-muted);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.task-card.completed .task-title::after {
+  transform: scaleX(1);
+}
+
+/* État vide */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 20px;
+}
+
+.empty-state p {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.empty-subtext {
+  font-size: 10.5px;
+  opacity: 0.7;
+}
+
+/* --- PANNEAU DE PARAMÈTRES (BOTTOM SLIDE) --- */
+.settings-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 380px;
+  background: rgba(15, 18, 28, 0.95);
+  border-top: var(--border-widget);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.settings-panel.open {
+  transform: translateY(0);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h2 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-icon-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-group label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.setting-group input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.setting-group input:focus {
+  border-color: var(--accent-indigo);
+}
+
+/* Switch Toggles */
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+}
+
+.switch-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.switch-container input {
+  display: none;
+}
+
+.switch-slider {
+  width: 34px;
+  height: 18px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.switch-container input:checked + .switch-slider {
+  background-color: var(--accent-indigo);
+}
+
+.switch-container input:checked + .switch-slider::before {
+  transform: translateX(16px);
+}
+
+/* Bouton enregistrer */
+.btn-save {
+  background: var(--accent-indigo);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-save:hover {
+  background: hsl(250, 85%, 58%);
+  box-shadow: 0 0 10px var(--accent-indigo-glow);
+}

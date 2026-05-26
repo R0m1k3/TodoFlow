@@ -28,7 +28,7 @@ fn set_autostart(enabled: bool) -> Result<(), String> {
     // Permet d'activer ou de désactiver le lancement automatique au démarrage de Windows.
     // On écrit directement dans le registre Windows (HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run)
     // ce qui évite d'avoir à gérer un installateur complexe ou des plugins externes lourds.
-    let hkcu = RegKey::predefined(HKEY_CURRENT_USER);
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let run_key = hkcu
         .open_subkey_with_flags(
             r"Software\Microsoft\Windows\CurrentVersion\Run",
@@ -55,7 +55,7 @@ fn set_autostart(enabled: bool) -> Result<(), String> {
 #[tauri::command]
 fn get_autostart() -> Result<bool, String> {
     // Lit le registre Windows pour vérifier si l'application est configurée pour démarrer automatiquement.
-    let hkcu = RegKey::predefined(HKEY_CURRENT_USER);
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
     let run_key = hkcu
         .open_subkey_with_flags(
             r"Software\Microsoft\Windows\CurrentVersion\Run",

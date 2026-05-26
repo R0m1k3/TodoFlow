@@ -11,6 +11,7 @@ let state = {
   apiKey: "widget-token-secure-789",
   alwaysOnTop: false,
   autostart: false,
+  opacity: 70,
   tasks: [],
   pollingInterval: null
 };
@@ -38,6 +39,10 @@ const inputAutostart = document.getElementById("setting-autostart");
 const btnMinimize = document.getElementById("btn-minimize");
 const btnClose = document.getElementById("btn-close");
 
+const inputOpacity = document.getElementById("setting-opacity");
+const opacityValue = document.getElementById("opacity-value");
+let taskToDeleteId = null;
+
 // --- INITIALISATION ---
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -48,6 +53,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   inputApiUrl.value = state.apiUrl;
   inputApiKey.value = state.apiKey;
   inputAlwaysOnTop.checked = state.alwaysOnTop;
+  inputOpacity.value = state.opacity;
+  opacityValue.textContent = state.opacity;
+
+  // Real-time opacity slider updates
+  inputOpacity.addEventListener("input", () => {
+    const val = inputOpacity.value;
+    opacityValue.textContent = val;
+    document.documentElement.style.setProperty("--widget-opacity", val / 100);
+  });
+
+  // Modal de confirmation de suppression personnalisé
+  const confirmModal = document.getElementById("confirm-modal");
+  const btnConfirmCancel = document.getElementById("btn-confirm-cancel");
+  const btnConfirmDelete = document.getElementById("btn-confirm-delete");
+
+  btnConfirmCancel.addEventListener("click", () => {
+    confirmModal.classList.remove("open");
+    taskToDeleteId = null;
+  });
+
+  btnConfirmDelete.addEventListener("click", async () => {
+    if (taskToDeleteId) {
+      confirmModal.classList.remove("open");
+      await executeDeleteTask(taskToDeleteId);
+      taskToDeleteId = null;
+    }
+  });
   
   // Événements d'ouverture/fermeture des paramètres
   btnSettings.addEventListener("click", () => settingsPanel.classList.add("open"));
@@ -88,6 +120,7 @@ function loadSettingsFromStorage() {
   const storedApiUrl = localStorage.getItem("todoflow_api_url");
   const storedApiKey = localStorage.getItem("todoflow_api_key");
   const storedAlwaysOnTop = localStorage.getItem("todoflow_always_on_top");
+  const storedOpacity = localStorage.getItem("todoflow_opacity");
   
   if (storedApiUrl) state.apiUrl = storedApiUrl;
   if (storedApiKey) state.apiKey = storedApiKey;
@@ -98,6 +131,13 @@ function loadSettingsFromStorage() {
       invoke("toggle_always_on_top", { enabled: state.alwaysOnTop }).catch(console.error);
     }
   }
+  if (storedOpacity) {
+    state.opacity = parseInt(storedOpacity);
+    document.documentElement.style.setProperty("--widget-opacity", state.opacity / 100);
+  } else {
+    state.opacity = 70;
+    document.documentElement.style.setProperty("--widget-opacity", 0.70);
+  }
 }
 
 async function saveSettings() {
@@ -105,14 +145,17 @@ async function saveSettings() {
   const newKey = inputApiKey.value.trim();
   const newAlwaysOnTop = inputAlwaysOnTop.checked;
   const newAutostart = inputAutostart.checked;
+  const newOpacity = inputOpacity.value;
   
   state.apiUrl = newUrl;
   state.apiKey = newKey;
   state.alwaysOnTop = newAlwaysOnTop;
+  state.opacity = parseInt(newOpacity);
   
   localStorage.setItem("todoflow_api_url", newUrl);
   localStorage.setItem("todoflow_api_key", newKey);
   localStorage.setItem("todoflow_always_on_top", newAlwaysOnTop.toString());
+  localStorage.setItem("todoflow_opacity", newOpacity.toString());
   
   // Appel des fonctions système Windows natives via Tauri
   if (appWindow && invoke) {
@@ -264,6 +307,14 @@ function renderTasksList() {
     // Structure de la carte de tâche
     const card = document.createElement("div");
     card.className = `task-card ${isCompleted ? 'completed' : ''}`;
+    
+    // Clic pour étendre/réduire le titre si long
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".custom-checkbox") || e.target.closest(".btn-task-action") || e.target.closest(".task-edit-input")) {
+        return;
+      }
+      card.classList.toggle("expanded");
+    });
     
     // Checkbox personnalisée cochable
     const checkbox = document.createElement("div");
@@ -437,9 +488,13 @@ async function updateTaskTitle(taskId, newTitle) {
   }
 }
 
-async function deleteTask(taskId) {
-  if (!confirm("Voulez-vous vraiment supprimer cette tâche ?")) return;
-  
+function deleteTask(taskId) {
+  taskToDeleteId = taskId;
+  const modal = document.getElementById("confirm-modal");
+  modal.classList.add("open");
+}
+
+async function executeDeleteTask(taskId) {
   try {
     const response = await fetch(`${state.apiUrl}/api/v1/tasks/${taskId}`, {
       method: "DELETE",

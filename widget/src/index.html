@@ -84,6 +84,11 @@
           </label>
         </div>
 
+        <div class="setting-group">
+          <label for="setting-opacity">Transparence du fond (<span id="opacity-value">70</span>%)</label>
+          <input type="range" id="setting-opacity" min="20" max="100" value="70" class="slider-opacity">
+        </div>
+
         <div class="setting-toggle">
           <label class="switch-container">
             <span class="switch-label">Lancer au démarrage</span>
@@ -102,6 +107,18 @@
     // Import dynamique pour supporter l'exécution dans le navigateur pendant le dév
     window.__TAURI__ = window.__TAURI__ || null;
   </script>
+  <!-- Modal de confirmation de suppression personnalisé (Thème Glassmorphism) -->
+  <div class="confirm-modal-overlay" id="confirm-modal">
+    <div class="confirm-modal-box">
+      <h3>Supprimer la tâche ?</h3>
+      <p>Cette action est irréversible et supprimera définitivement la tâche de la base SaaS.</p>
+      <div class="confirm-modal-actions">
+        <button class="btn-confirm-cancel" id="btn-confirm-cancel">Annuler</button>
+        <button class="btn-confirm-delete" id="btn-confirm-delete">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

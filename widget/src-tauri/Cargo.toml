@@ -21,3 +21,7 @@ codegen-units = 1
 lto = true
 opt-level = "z"
 strip = true
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

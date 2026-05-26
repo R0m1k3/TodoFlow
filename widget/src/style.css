@@ -1,37 +1,43 @@
+/* --- SYSTÈME DE DESIGN & TOKENS FUTURISTES --- */
 :root {
   --widget-opacity: 0.70;
-  --bg-widget: rgba(18, 22, 33, var(--widget-opacity));
-  --bg-card: rgba(255, 255, 255, 0.03);
-  --bg-card-hover: rgba(255, 255, 255, 0.07);
-  --border-widget: 1px solid rgba(255, 255, 255, 0.09);
-  --border-card: 1px solid rgba(255, 255, 255, 0.05);
+  --bg-widget: rgba(11, 14, 26, var(--widget-opacity));
+  --bg-card: rgba(255, 255, 255, 0.035);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --border-widget: 1px solid rgba(255, 255, 255, 0.11);
+  --border-card: 1px solid rgba(255, 255, 255, 0.06);
   
-  /* Couleurs thématiques HSL */
-  --accent-indigo: hsl(250, 85%, 65%);
-  --accent-indigo-glow: rgba(99, 102, 241, 0.3);
-  --accent-mint: hsl(165, 80%, 42%);
-  --accent-mint-glow: rgba(16, 185, 129, 0.15);
-  --accent-amber: hsl(38, 95%, 55%);
-  --accent-amber-glow: rgba(245, 158, 11, 0.15);
+  /* Couleurs de marque HSL vibrantes */
+  --accent-indigo: hsl(250, 95%, 68%);
+  --accent-indigo-glow: rgba(99, 102, 241, 0.35);
+  
+  --accent-mint: hsl(165, 90%, 45%);
+  --accent-mint-glow: rgba(16, 185, 129, 0.2);
+  
+  --accent-amber: hsl(38, 95%, 58%);
+  --accent-amber-glow: rgba(245, 158, 11, 0.2);
   
   /* Textes */
-  --text-primary: hsl(220, 20%, 96%);
-  --text-secondary: hsl(220, 12%, 68%);
-  --text-muted: rgba(241, 243, 249, 0.45);
+  --text-primary: hsl(220, 20%, 97%);
+  --text-secondary: hsl(220, 14%, 72%);
+  --text-muted: rgba(241, 243, 249, 0.40);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--accent-indigo), var(--accent-mint));
+  --gradient-card-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.05));
 }
 
-/* Réinitialisation de base */
+/* Réinitialisation moderne */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  user-select: none; /* Évite la sélection de texte accidentelle pour un widget */
+  user-select: none;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
-  background: transparent; /* Indispensable pour la transparence de la fenêtre Tauri */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: var(--text-primary);
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,27 +45,28 @@ body {
   overflow: hidden;
 }
 
-/* --- LE CONTAINER DU WIDGET (GLASSMORPHISM PREMIUM) --- */
+/* --- LE CONTAINER DU WIDGET (GLASSMORPHISM ABSOLU) --- */
 .todo-widget {
   width: 340px;
   height: 520px;
   background: var(--bg-widget);
-  backdrop-filter: blur(30px) saturate(125%);
-  -webkit-backdrop-filter: blur(30px) saturate(125%);
-  border-radius: 16px;
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  border-radius: 20px;
   border: var(--border-widget);
   box-shadow: 
-    0 8px 32px 0 rgba(0, 0, 0, 0.35),
-    0 1px 0px 0px rgba(255, 255, 255, 0.12) inset;
+    0 12px 40px 0 rgba(0, 0, 0, 0.5),
+    0 1px 0px 0px rgba(255, 255, 255, 0.15) inset;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 /* --- HEADER DU WIDGET --- */
 .widget-header {
-  padding: 16px 16px 12px 16px;
+  padding: 18px 18px 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,7 +75,7 @@ body {
 .header-drag-zone {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
   height: 100%;
   cursor: grab;
@@ -78,102 +85,108 @@ body {
   cursor: grabbing;
 }
 
-/* Indicateur d'état connecté à l'API */
+/* Indicateur d'état connecté lumineux */
 .status-indicator {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  transition: all 0.5s ease;
+  transition: all 0.4s ease;
 }
 
 .status-indicator.connected {
   background-color: var(--accent-mint);
-  box-shadow: 0 0 8px var(--accent-mint);
+  box-shadow: 0 0 10px 2px var(--accent-mint);
 }
 
 .status-indicator.disconnected {
-  background-color: hsl(0, 80%, 60%);
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  background-color: hsl(0, 85%, 60%);
+  box-shadow: 0 0 10px 2px rgba(239, 68, 68, 0.6);
 }
 
 .widget-title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-transform: uppercase;
-  color: var(--text-primary);
-  opacity: 0.95;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 4px;
-  z-index: 10; /* Assure le clic par-dessus la zone de drag */
+  gap: 6px;
+  z-index: 10;
 }
 
-/* Boutons de contrôle style Windows */
+/* Boutons de contrôle Premium */
 .win-btn {
   background: transparent;
   border: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .win-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+  transform: scale(1.05);
 }
 
 .win-btn.btn-close:hover {
   background: hsl(0, 75%, 50%);
   color: #fff;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
 }
 
-/* --- INDICATEUR DE PROGRESSION --- */
+/* --- INDICATEUR DE PROGRESSION HAUT DE GAMME --- */
 .progress-container {
   width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.05);
+  height: 3px;
+  background: rgba(255, 255, 255, 0.04);
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-indigo), var(--accent-mint));
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--gradient-primary);
+  box-shadow: 0 0 8px var(--accent-indigo-glow);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* --- ZONE DE CORPS --- */
 .widget-body {
   flex: 1;
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow: hidden;
 }
 
-/* Formulaire d'ajout de tâche */
+/* Formulaire d'ajout de tâche flottant */
 .add-task-form {
   display: flex;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  padding: 4px 6px;
-  transition: border-color 0.3s;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 5px 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .add-task-form:focus-within {
-  border-color: rgba(99, 102, 241, 0.4);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
 }
 
 .add-task-form input {
@@ -182,36 +195,37 @@ body {
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-size: 13px;
-  padding: 6px;
+  font-size: 13.5px;
+  padding: 8px;
   font-family: inherit;
 }
 
 .add-task-form input::placeholder {
-  color: rgba(241, 243, 249, 0.35);
+  color: rgba(241, 243, 249, 0.3);
 }
 
 .btn-add {
-  background: var(--accent-indigo);
+  background: var(--gradient-primary);
   border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px var(--accent-indigo-glow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-add:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px var(--accent-indigo-glow);
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 }
 
 .btn-add svg {
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 
 .btn-add:hover svg {
@@ -222,13 +236,13 @@ body {
 .tasks-list {
   flex: 1;
   overflow-y: auto;
-  padding-right: 2px;
+  padding-right: 4px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* Personnalisation Scrollbar */
+/* Scrollbar futuriste */
 .tasks-list::-webkit-scrollbar {
   width: 4px;
 }
@@ -238,37 +252,45 @@ body {
 }
 
 .tasks-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
+  transition: background 0.3s;
 }
 
-/* --- CARTE DE TÂCHE INDIVIDUELLE --- */
+.tasks-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* --- CARTE DE TÂCHE SQUIRCLE GLASS --- */
 .task-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  opacity: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .task-card:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(99, 102, 241, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 8px 24px rgba(99, 102, 241, 0.18),
+    0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Checkbox personnalisée */
+/* Checkbox Squircle interactive */
 .custom-checkbox {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  width: 20px;
+  height: 20px;
+  border-radius: 7px;
+  border: 1.8px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -279,13 +301,15 @@ body {
 
 .custom-checkbox:hover {
   border-color: var(--accent-indigo);
-  background: rgba(99, 102, 241, 0.08);
+  background: rgba(99, 102, 241, 0.1);
+  transform: scale(1.05);
 }
 
-/* Checkbox cochée (Terminé) */
+/* Checkbox Pop */
 .custom-checkbox.checked {
-  background: linear-gradient(135deg, hsl(165, 80%, 42%), hsl(165, 80%, 32%));
+  background: var(--gradient-primary);
   border-color: transparent;
+  box-shadow: 0 0 10px var(--accent-indigo-glow);
   animation: checkboxPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -299,7 +323,7 @@ body {
 }
 
 @keyframes checkboxPop {
-  50% { transform: scale(1.2); }
+  50% { transform: scale(1.15); }
   100% { transform: scale(1); }
 }
 
@@ -308,12 +332,12 @@ body {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  min-width: 0; /* Permet le troncage correct du texte */
+  min-width: 0;
 }
 
 .task-title {
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 550;
   color: var(--text-primary);
   transition: color 0.3s;
   position: relative;
@@ -327,16 +351,73 @@ body {
 .task-date {
   font-size: 9.5px;
   color: var(--text-secondary);
-  margin-top: 3px;
+  margin-top: 4px;
+}
+
+/* --- BOUTONS ACTIONS SURVOL (MODIFIER / SUPPRIMER) --- */
+.task-actions {
+  display: flex;
+  gap: 8px;
+  margin-right: 6px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.task-card:hover .task-actions {
+  opacity: 1;
+}
+
+.btn-task-action {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-task-action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transform: scale(1.08);
+}
+
+.btn-task-action.btn-delete:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: hsl(0, 80%, 65%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+.btn-task-action svg {
+  pointer-events: none;
+}
+
+/* Input d'édition premium */
+.task-edit-input {
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid var(--accent-indigo);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 3px 8px;
+  width: 100%;
+  outline: none;
+  box-shadow: 0 0 10px var(--accent-indigo-glow);
 }
 
 /* --- BADGES DE STATUT --- */
 .status-badge {
   font-size: 8.5px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 3px 7px;
+  padding: 4px 8px;
   border-radius: 20px;
   flex-shrink: 0;
 }
@@ -344,26 +425,39 @@ body {
 .status-badge.in-progress {
   background: var(--accent-amber-glow);
   color: var(--accent-amber);
-  border: 1px solid rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-badge.in-progress:hover {
+  transform: scale(1.05);
+  background: rgba(245, 158, 11, 0.3);
 }
 
 .status-badge.todo {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-badge.todo:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .status-badge.done {
   background: var(--accent-mint-glow);
   color: var(--accent-mint);
-  border: 1px solid rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 /* --- DESIGN DES TÂCHES TERMINÉES (ANIMÉ) --- */
 .task-card.completed {
-  opacity: 0.5;
+  opacity: 0.45;
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .task-card.completed .task-title {
@@ -380,14 +474,28 @@ body {
   background: var(--text-muted);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .task-card.completed .task-title::after {
   transform: scaleX(1);
 }
 
-/* État vide */
+/* --- ACCORDION EXPANSION STATE --- */
+.task-card.expanded {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.task-card.expanded .task-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  display: block;
+  word-break: break-word;
+}
+
+/* État vide premium */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -400,14 +508,15 @@ body {
 }
 
 .empty-state p {
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-primary);
 }
 
 .empty-subtext {
   font-size: 10.5px;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 /* --- PANNEAU DE PARAMÈTRES (BOTTOM SLIDE) --- */
@@ -416,18 +525,20 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 380px;
-  background: rgba(15, 18, 28, 0.95);
+  height: 390px;
+  background: rgba(13, 16, 28, 0.96);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border-top: var(--border-widget);
-  border-radius: 16px 16px 0 0;
-  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   transform: translateY(100%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 100;
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .settings-panel.open {
@@ -442,9 +553,12 @@ body {
 
 .settings-header h2 {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .btn-icon-close {
@@ -452,8 +566,8 @@ body {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -480,177 +594,32 @@ body {
 }
 
 .setting-group label {
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
 .setting-group input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 8px 10px;
+  border-radius: 10px;
+  padding: 10px 12px;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 12.5px;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
 }
 
 .setting-group input:focus {
   border-color: var(--accent-indigo);
-}
-
-/* Switch Toggles */
-.setting-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0;
-}
-
-.switch-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  cursor: pointer;
-}
-
-.switch-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.switch-container input {
-  display: none;
-}
-
-.switch-slider {
-  width: 34px;
-  height: 18px;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  position: relative;
-  transition: background-color 0.3s;
-}
-
-.switch-slider::before {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.switch-container input:checked + .switch-slider {
-  background-color: var(--accent-indigo);
-}
-
-.switch-container input:checked + .switch-slider::before {
-  transform: translateX(16px);
-}
-
-/* Bouton enregistrer */
-.btn-save {
-  background: var(--accent-indigo);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-save:hover {
-  background: hsl(250, 85%, 58%);
-  box-shadow: 0 0 10px var(--accent-indigo-glow);
-}
-
-/* --- BOUTONS ACTIONS DES TÂCHES (MODIFIER / SUPPRIMER) --- */
-.task-actions {
-  display: flex;
-  gap: 6px;
-  margin-right: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.task-card:hover .task-actions {
-  opacity: 1;
-}
-
-.btn-task-action {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.btn-task-action:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-}
-
-.btn-task-action.btn-delete:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: hsl(0, 80%, 65%);
-}
-
-.btn-task-action svg {
-  pointer-events: none; /* Évite d'interférer avec le clic */
-}
-
-/* Style de l'input d'édition en ligne */
-.task-edit-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--accent-indigo);
-  border-radius: 6px;
-  color: var(--text-primary);
-  font-size: 13px;
-  font-family: inherit;
-  padding: 2px 6px;
-  width: 100%;
-  outline: none;
   box-shadow: 0 0 8px var(--accent-indigo-glow);
 }
 
-/* --- ACCORDION / EXPANDED STATE --- */
-.task-card {
-  cursor: pointer;
-}
-
-.task-card.expanded {
-  background: var(--bg-card-hover);
-  border-color: rgba(99, 102, 241, 0.3);
-}
-
-.task-card.expanded .task-title {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-  display: block;
-  word-break: break-word;
-}
-
-/* --- RANGE SLIDER STYLING --- */
+/* Transparence Slider */
 .slider-opacity {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 6px;
   border-radius: 5px;
@@ -676,23 +645,99 @@ body {
   transform: scale(1.2);
 }
 
-/* --- CUSTOM CONFIRMATION MODAL OVERLAY --- */
+/* Switch Toggles */
+.setting-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+}
+
+.switch-label {
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--text-primary);
+}
+
+.switch-container input {
+  display: none;
+}
+
+.switch-slider {
+  width: 36px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.switch-slider::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.switch-container input:checked + .switch-slider {
+  background-color: var(--accent-indigo);
+  box-shadow: 0 0 8px var(--accent-indigo-glow);
+}
+
+.switch-container input:checked + .switch-slider::before {
+  transform: translateX(16px);
+}
+
+/* Bouton enregistrer premium */
+.btn-save {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px var(--accent-indigo-glow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-save:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+/* --- GLASSMORPHIC CONFIRMATION MODAL --- */
 .confirm-modal-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .confirm-modal-overlay.open {
@@ -702,13 +747,13 @@ body {
 
 .confirm-modal-box {
   width: 290px;
-  background: rgba(18, 22, 33, 0.95);
+  background: rgba(14, 18, 30, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   transform: scale(0.9);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
 }
 
@@ -717,30 +762,30 @@ body {
 }
 
 .confirm-modal-box h3 {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .confirm-modal-box p {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.5;
-  margin-bottom: 20px;
+  line-height: 1.6;
+  margin-bottom: 22px;
 }
 
 .confirm-modal-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
 }
 
 .confirm-modal-actions button {
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -750,6 +795,7 @@ body {
 .btn-confirm-cancel {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-confirm-cancel:hover {
@@ -759,10 +805,11 @@ body {
 .btn-confirm-delete {
   background: hsl(0, 75%, 50%);
   color: white;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .btn-confirm-delete:hover {
   background: hsl(0, 75%, 45%);
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.5);
+  transform: scale(1.02);
 }

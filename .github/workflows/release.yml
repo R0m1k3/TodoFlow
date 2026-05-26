@@ -38,6 +38,22 @@ jobs:
           cd widget
           npm install
 
+      - name: Update version in tauri.conf.json
+        shell: bash
+        run: |
+          TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
+          if [[ ! "$TAG_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            TAG_VERSION="1.0.0"
+          fi
+          echo "Updating tauri.conf.json version to $TAG_VERSION"
+          node -e "
+            const fs = require('fs');
+            const file = './widget/src-tauri/tauri.conf.json';
+            const config = JSON.parse(fs.readFileSync(file, 'utf8'));
+            config.package.version = '$TAG_VERSION';
+            fs.writeFileSync(file, JSON.stringify(config, null, 2), 'utf8');
+          "
+
       - name: Build the Tauri app
         uses: tauri-apps/tauri-action@v0
         env:

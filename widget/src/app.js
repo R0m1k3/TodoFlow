@@ -176,6 +176,11 @@ async function saveSettings() {
 // --- APPELS API (CRUD) ---
 
 async function fetchTasks() {
+  // Suspendre la synchronisation si l'utilisateur est en train d'éditer une tâche pour éviter de perdre le focus et fermer l'édition
+  if (document.querySelector(".task-card.editing")) {
+    return;
+  }
+
   // Récupération asynchrone des tâches avec la clé API
   try {
     const response = await fetch(`${state.apiUrl}/api/v1/tasks`, {

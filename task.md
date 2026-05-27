@@ -4,9 +4,13 @@
 Développement d'un widget Windows moderne et simple connecté à un serveur centralisé hébergé dans un conteneur Docker. L'API du serveur doit être accessible par un agent IA pour piloter la liste de tâches. Les tâches doivent afficher leur date de création et pouvoir être marquées comme "En cours" ou "Terminé".
 
 ## Focus Actuel
-- Projet entièrement à jour et documenté pour les Agents IA externes.
+- Projet stable, fonctionnel et documenté.
 
 ## Master Plan
+- [x] **Correction du Bug d'Édition du Widget**
+  - [x] Identifier la cause racine (le polling de 4s écrase le DOM et provoque un blur de l'input)
+  - [x] Modifier `fetchTasks()` dans `widget/src/app.js` pour suspendre la synchronisation durant l'édition
+  - [x] Tester et valider la correction localement
 - [x] **Synchronisation avec le Dépôt Distant**
   - [x] Mettre à jour `task.md` pour refléter la demande de l'utilisateur
   - [x] Effectuer un `git pull` pour appliquer les 20 commits de retard sur `origin/main`
@@ -52,3 +56,4 @@ Développement d'un widget Windows moderne et simple connecté à un serveur cen
 - **2026-05-26** : Implémentation du serveur API conteneurisé (FastAPI + SQLModel + Docker Compose) et du widget de bureau Tauri (HTML/CSS/JS, drag-region, always-on-top natif, autostart registre Windows, tray icon). Rédaction des tests unitaires et du guide d'intégration pour Agent IA. Début de la validation.
 - **2026-05-27** : Récupération des dernières modifications du dépôt distant (`origin/main`). Synchronisation de 20 commits incluant des améliorations de l'interface (style glassmorphic, redimensionnement natif, icônes premium 3D) et des correctifs pour l'intégration Docker/Tauri. La copie locale est désormais à jour.
 - **2026-05-27** : Mise à jour complète du guide d'intégration `README_AI_AGENT.md`. Ajout de la documentation pour la route `GET /api/v1/tasks/{task_id}` et création de schémas complets d'outils (Function Calling / Tools) pour OpenAI, Gemini et Anthropic Claude pour faciliter l'intégration immédiate d'un agent externe.
+- **2026-05-27** : Correction du bug d'édition de tâches sur le widget. Ajout d'une condition pour suspendre temporairement le rafraîchissement périodique (polling de 4s) lorsque l'utilisateur édite le titre d'une tâche. Cela évite le rafraîchissement destructif du DOM et la perte de focus.

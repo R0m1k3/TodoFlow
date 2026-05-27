@@ -62,7 +62,23 @@ Permet à l'Agent IA d'ajouter un nouvel objectif pour l'utilisateur.
     ```
 *   **Réponse (201 Created) :** Renvoie l'objet créé avec son UUID unique généré par le serveur et son horodatage de création (`created_at`).
 
-### C. Mettre à jour une tâche (PUT `/api/v1/tasks/{id}`)
+### C. Récupérer les détails d'une tâche (GET `/api/v1/tasks/{id}`)
+Permet à l'Agent IA d'obtenir les informations complètes d'une tâche spécifique à partir de son UUID.
+
+*   **Réponse (200 OK) :**
+    ```json
+    {
+      "id": "e1a77ff0-2c32-4f37-baef-e68b903f806e",
+      "title": "Acheter du pain",
+      "description": "Prendre une tradition bien cuite",
+      "status": "A faire",
+      "created_at": "2026-05-26T14:15:30Z",
+      "updated_at": "2026-05-26T14:15:30Z"
+    }
+    ```
+*   **Réponse (404 Not Found) :** Si aucune tâche ne correspond à l'identifiant fourni.
+
+### D. Mettre à jour une tâche (PUT `/api/v1/tasks/{id}`)
 Permet à l'Agent IA de marquer une tâche comme **"En cours"** ou **"Termine"**, ou d'en modifier le titre/description.
 
 *   **Request Body (JSON - Mise à jour partielle acceptée) :**
@@ -73,7 +89,7 @@ Permet à l'Agent IA de marquer une tâche comme **"En cours"** ou **"Termine"**
     ```
 *   **Réponse (200 OK) :** Renvoie l'objet mis à jour avec son nouvel horodatage `updated_at`.
 
-### D. Supprimer une tâche (DELETE `/api/v1/tasks/{id}`)
+### E. Supprimer une tâche (DELETE `/api/v1/tasks/{id}`)
 Permet à l'Agent IA de nettoyer la liste en supprimant une tâche.
 
 *   **Réponse (204 No Content) :** Succès de la suppression (aucun corps de réponse).
@@ -121,6 +137,241 @@ if create_resp.status_code == 201:
     )
     if update_resp.status_code == 200:
         print("La tâche a été marquée 'En cours' par l'IA.")
+```
+
+---
+
+## 🛠️ 5. Définition des Outils pour Agents IA (Function Calling)
+
+Si vous configurez un agent IA externe utilisant les API d'OpenAI, Anthropic ou Gemini, vous pouvez copier-coller les schémas de fonctions ci-dessous pour lui donner un accès direct et natif à la Todo List.
+
+### A. Format OpenAI / Gemini (JSON Schema)
+
+```json
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_tasks",
+      "description": "Récupère la liste de toutes les tâches stockées dans TodoFlow. Permet de filtrer optionnellement par statut.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["A faire", "En cours", "Termine"],
+            "description": "Filtre optionnel pour récupérer uniquement les tâches ayant ce statut ('A faire', 'En cours', 'Termine')."
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_task",
+      "description": "Récupère les détails précis d'une tâche existante à partir de son UUID.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "L'UUID unique de la tâche à récupérer."
+          }
+        },
+        "required": ["task_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_task",
+      "description": "Crée une nouvelle tâche dans la Todo list.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Le titre court et descriptif de la tâche (ex: 'Acheter du pain')."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description détaillée de la tâche ou consignes supplémentaires."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["A faire", "En cours", "Termine"],
+            "default": "A faire",
+            "description": "Le statut initial de la tâche (par défaut 'A faire')."
+          }
+        },
+        "required": ["title"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update_task",
+      "description": "Met à jour une tâche existante (modifier le titre, la description, ou changer de statut comme passer à 'En cours' ou 'Termine').",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "L'UUID unique de la tâche à modifier."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Nouveau titre pour la tâche."
+          },
+          "description": {
+            "type": "string",
+            "description": "Nouvelle description pour la tâche."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["A faire", "En cours", "Termine"],
+            "description": "Nouveau statut pour la tâche."
+          }
+        },
+        "required": ["task_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_task",
+      "description": "Supprime définitivement une tâche de la liste à partir de son UUID.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "L'UUID unique de la tâche à supprimer."
+          }
+        },
+        "required": ["task_id"]
+      }
+    }
+  }
+]
+```
+
+### B. Format Anthropic / Claude (Messages API Tools)
+
+```json
+[
+  {
+    "name": "get_tasks",
+    "description": "Récupère la liste de toutes les tâches stockées dans TodoFlow. Permet de filtrer optionnellement par statut.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["A faire", "En cours", "Termine"],
+          "description": "Filtre optionnel pour récupérer uniquement les tâches ayant ce statut."
+        }
+      }
+    }
+  },
+  {
+    "name": "get_task",
+    "description": "Récupère les détails précis d'une tâche existante à partir de son UUID.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "L'UUID unique de la tâche à récupérer."
+        }
+      },
+      "required": ["task_id"]
+    }
+  },
+  {
+    "name": "create_task",
+    "description": "Crée une nouvelle tâche dans la Todo list.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Le titre court et descriptif de la tâche."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description détaillée de la tâche."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["A faire", "En cours", "Termine"],
+          "default": "A faire",
+          "description": "Le statut initial de la tâche."
+        }
+      },
+      "required": ["title"]
+    }
+  },
+  {
+    "name": "update_task",
+    "description": "Met à jour une tâche existante par son UUID (modifier le titre, la description, ou changer de statut).",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "L'UUID unique de la tâche à modifier."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Nouveau titre pour la tâche."
+        },
+        "description": {
+          "type": "string",
+          "description": "Nouvelle description."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["A faire", "En cours", "Termine"],
+          "description": "Nouveau statut."
+        }
+      },
+      "required": ["task_id"]
+    }
+  },
+  {
+    "name": "delete_task",
+    "description": "Supprime définitivement une tâche de la liste à partir de son UUID.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "L'UUID unique de la tâche à supprimer."
+        }
+      },
+      "required": ["task_id"]
+    }
+  }
+]
 ```
 
 ---

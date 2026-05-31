@@ -88,7 +88,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // Événements Tauri pour le contrôle de la fenêtre de bureau
   if (appWindow) {
-    btnMinimize.addEventListener("click", () => appWindow.minimize());
+    // La fenêtre utilise skipTaskbar:true : elle n'apparaît jamais dans la barre des tâches.
+    // Un minimize() classique la rendrait donc irrécupérable. On masque plutôt vers le
+    // system tray, d'où elle peut toujours être restaurée via l'icône de la barre d'état.
+    btnMinimize.addEventListener("click", () => appWindow.hide());
     btnClose.addEventListener("click", () => appWindow.hide()); // Masquer vers le tray au clic sur 'Fermer'
     
     // Récupération de l'état réel du démarrage automatique depuis le registre Windows

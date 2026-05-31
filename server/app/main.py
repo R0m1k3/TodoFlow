@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="TodoFlow API",
     description="API centralisée pour la Todo list, connectée au widget de bureau et pilotable par Agent IA.",
-    version="1.0.0",
+    version="1.1.0",
     lifespan=lifespan
 )
 

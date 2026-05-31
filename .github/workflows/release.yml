@@ -61,7 +61,12 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'TodoFlow ${{ github.ref_name }}'
-          releaseBody: 'Release generated automatically by GitHub Actions.'
-          releaseDraft: true
+          releaseBody: |
+            Installeur Windows de TodoFlow ${{ github.ref_name }}.
+
+            Téléchargez le fichier `.exe` (NSIS) ou `.msi` ci-dessous pour installer l'application.
+          # Publier directement la release (et non en brouillon) afin qu'elle soit visible
+          # publiquement et marquée automatiquement comme "Latest" sur la page GitHub.
+          releaseDraft: false
           prerelease: false
           projectPath: './widget'

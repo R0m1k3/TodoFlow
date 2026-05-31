@@ -67,6 +67,32 @@ fn get_autostart() -> Result<bool, String> {
     Ok(val.is_ok())
 }
 
+// --- GESTION DE LA VISIBILITÉ DE LA FENÊTRE ---
+
+fn toggle_window_visibility(app: &AppHandle) {
+    // Bascule l'affichage du widget depuis l'icône de la barre d'état.
+    // Comme la fenêtre est configurée avec skipTaskbar:true, l'icône du tray est le
+    // seul point de restauration : il doit donc fonctionner dans tous les états.
+    let window = match app.get_window("main") {
+        Some(w) => w,
+        None => return,
+    };
+
+    // Une fenêtre réduite est toujours rapportée comme "visible" par Tauri. On la
+    // considère donc comme masquée afin de la restaurer correctement (et non la re-masquer).
+    let is_minimized = window.is_minimized().unwrap_or(false);
+    let is_visible = window.is_visible().unwrap_or(false);
+
+    if is_visible && !is_minimized {
+        let _ = window.hide();
+    } else {
+        // Restauration robuste : dé-minimiser, ré-afficher, puis ramener au premier plan.
+        let _ = window.unminimize();
+        let _ = window.show();
+        let _ = window.set_focus();
+    }
+}
+
 // --- CONTEXTE ET INITIALISATION ---
 
 fn main() {
@@ -84,26 +110,14 @@ fn main() {
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick { .. } => {
                 // Un simple clic gauche sur l'icône de la barre des tâches bascule la visibilité
-                let window = app.get_window("main").unwrap();
-                if window.is_visible().unwrap() {
-                    window.hide().unwrap();
-                } else {
-                    window.show().unwrap();
-                    window.set_focus().unwrap();
-                }
+                toggle_window_visibility(app);
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
                     std::process::exit(0);
                 }
                 "toggle" => {
-                    let window = app.get_window("main").unwrap();
-                    if window.is_visible().unwrap() {
-                        window.hide().unwrap();
-                    } else {
-                        window.show().unwrap();
-                        window.set_focus().unwrap();
-                    }
+                    toggle_window_visibility(app);
                 }
                 _ => {}
             },

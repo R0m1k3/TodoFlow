@@ -3,7 +3,10 @@ name: Release Tauri App
 on:
   push:
     tags:
+      # Accepte les tags en minuscule (v1.1.0) comme en majuscule (V1.1.0),
+      # pour éviter qu'une faute de casse empêche le déclenchement du build.
       - 'v*'
+      - 'V*'
   workflow_dispatch:
 
 jobs:
@@ -41,8 +44,10 @@ jobs:
       - name: Update version in tauri.conf.json
         shell: bash
         run: |
-          TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^v//')
-          if [[ ! "$TAG_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+          # Retire un préfixe v/V puis ne garde que les 3 premiers segments
+          # (ex. "V1.1.0.0" -> "1.1.0") afin de produire une version semver valide.
+          TAG_VERSION=$(echo "${{ github.ref_name }}" | sed 's/^[vV]//' | cut -d. -f1-3)
+          if [[ ! "$TAG_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             TAG_VERSION="1.0.0"
           fi
           echo "Updating tauri.conf.json version to $TAG_VERSION"

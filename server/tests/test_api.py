@@ -107,3 +107,12 @@ def test_delete_task(client: TestClient):
     # 3. Vérification de la disparition (404)
     response = client.get(f"/api/v1/tasks/{task_id}", headers=headers)
     assert response.status_code == 404
+
+def test_public_default_keys_refused(client: TestClient):
+    # Les anciennes clés publiées dans le dépôt ne donnent jamais accès
+    from app.config import settings
+    settings.API_KEYS_RAW = f"widget-token-secure-789,{VALID_API_KEY}"
+    response = client.get("/api/v1/tasks", headers={"X-API-Key": "widget-token-secure-789"})
+    assert response.status_code == 403
+    response = client.get("/api/v1/tasks", headers={"X-API-Key": VALID_API_KEY})
+    assert response.status_code == 200

@@ -31,21 +31,38 @@ write_env_value() {
   else
     printf '%s=%s\n' "$name" "$value" >> "$file"
   fi
+  chmod 600 "$file" 2>/dev/null || true
+}
+
+# Anciennes clés par défaut, publiées dans le dépôt : traitées comme absentes
+is_unset_or_default() {
+  [ -z "$1" ] || [ "$1" = "$DEFAULT_API_KEYS_RAW" ]
 }
 
 persisted_api_keys="$(read_env_value "$PERSISTED_ENV_FILE" "API_KEYS_RAW" || true)"
 app_env_api_keys="$(read_env_value "$APP_ENV_FILE" "API_KEYS_RAW" || true)"
 current_api_keys="${API_KEYS_RAW:-}"
 
-if [ -n "$persisted_api_keys" ] && { [ -z "$current_api_keys" ] || [ "$current_api_keys" = "$DEFAULT_API_KEYS_RAW" ]; }; then
-  export API_KEYS_RAW="$persisted_api_keys"
-elif [ -n "$app_env_api_keys" ] && { [ -z "$current_api_keys" ] || [ "$current_api_keys" = "$DEFAULT_API_KEYS_RAW" ]; }; then
-  export API_KEYS_RAW="$app_env_api_keys"
-  if [ "$app_env_api_keys" != "$DEFAULT_API_KEYS_RAW" ]; then
-    write_env_value "$PERSISTED_ENV_FILE" "API_KEYS_RAW" "$app_env_api_keys"
-  fi
-elif [ -n "$current_api_keys" ] && [ "$current_api_keys" != "$DEFAULT_API_KEYS_RAW" ]; then
+if ! is_unset_or_default "$current_api_keys"; then
   write_env_value "$PERSISTED_ENV_FILE" "API_KEYS_RAW" "$current_api_keys"
+elif ! is_unset_or_default "$persisted_api_keys"; then
+  export API_KEYS_RAW="$persisted_api_keys"
+elif ! is_unset_or_default "$app_env_api_keys"; then
+  export API_KEYS_RAW="$app_env_api_keys"
+  write_env_value "$PERSISTED_ENV_FILE" "API_KEYS_RAW" "$app_env_api_keys"
+else
+  # Premier démarrage sans clé : deux clés aléatoires (widget, agent IA),
+  # conservées dans le volume de données et affichées une seule fois.
+  widget_key="widget-$(python -c 'import secrets; print(secrets.token_urlsafe(24))')"
+  agent_key="agent-$(python -c 'import secrets; print(secrets.token_urlsafe(24))')"
+  export API_KEYS_RAW="${widget_key},${agent_key}"
+  write_env_value "$PERSISTED_ENV_FILE" "API_KEYS_RAW" "$API_KEYS_RAW"
+  echo "==================================================================="
+  echo "Clés API générées (affichées une seule fois, conservées dans $PERSISTED_ENV_FILE) :"
+  echo "  Widget   : $widget_key"
+  echo "  Agent IA : $agent_key"
+  echo "Pour choisir vos propres clés : variable API_KEYS_RAW."
+  echo "==================================================================="
 fi
 
 exec "$@"

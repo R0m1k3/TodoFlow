@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
+import hmac
 import json
 import os
 from uuid import UUID
@@ -26,7 +27,8 @@ def verify_api_key(api_key: str = Depends(api_key_header)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="La clé API est manquante dans l'en-tête X-API-Key."
         )
-    if api_key not in settings.api_keys:
+    # Comparaison à temps constant pour ne pas révéler les clés valides
+    if not any(hmac.compare_digest(api_key.encode(), key.encode()) for key in settings.api_keys):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Clé API invalide ou non autorisée."
@@ -38,6 +40,8 @@ def verify_api_key(api_key: str = Depends(api_key_header)):
 async def lifespan(app: FastAPI):
     # Création des tables à l'initialisation du serveur
     create_db_and_tables()
+    if not settings.api_keys:
+        print("ATTENTION : aucune clé API configurée (API_KEYS_RAW) : toutes les requêtes seront refusées.", flush=True)
     yield
 
 app = FastAPI(

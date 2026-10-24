@@ -10,10 +10,13 @@ Pour toutes les requêtes HTTP, l'Agent IA doit s'authentifier en fournissant la
 
 ### En-tête HTTP Requis :
 ```http
-X-API-Key: ai-agent-token-secure-101
+X-API-Key: <VOTRE_CLE_API>
 ```
 
-*Note : La clé par défaut pour l'agent IA dans la configuration de production est `ai-agent-token-secure-101`, mais elle peut être personnalisée via la variable d'environnement `API_KEYS_RAW` du conteneur Docker.*
+*Note : il n'existe aucune clé par défaut. Les clés se définissent avec la variable d'environnement `API_KEYS_RAW` du conteneur Docker (séparées par des virgules) ; si elle est vide, deux clés aléatoires (widget et agent IA) sont générées au premier démarrage, affichées une seule fois dans les journaux (`docker logs todoflow-api-server`) et conservées dans le volume de données.*
+
+### Sécurité / variables obligatoires
+*   `API_KEYS_RAW` : clés API autorisées. Les anciennes clés d'exemple (`widget-token-…`, `ai-agent-token-…`) publiées dans le dépôt sont refusées : configurez de nouvelles clés dans le widget (Paramètres → Clé API) et chez l'agent IA.
 
 ---
 
@@ -104,7 +107,7 @@ Voici un script simple montrant comment un Agent IA peut interagir avec l'API en
 import requests
 
 API_URL = "http://localhost:8000/api/v1"
-API_KEY = "ai-agent-token-secure-101"
+API_KEY = "<VOTRE_CLE_API>"
 
 headers = {
     "X-API-Key": API_KEY,
@@ -380,4 +383,4 @@ Si vous configurez un agent IA externe utilisant les API d'OpenAI, Anthropic ou 
 
 Si vous intégrez cette API à un LLM (comme GPT-4 ou Gemini), vous pouvez ajouter cette consigne dans son **System Prompt** :
 
-> *"Tu es un Agent IA assistant personnel. Tu as accès à l'API de gestion des tâches de l'utilisateur. Pour piloter sa liste, tu dois faire des appels REST sur l'API en utilisant l'en-tête `X-API-Key: ai-agent-token-secure-101`. Découvre les spécifications exactes de l'API en interrogeant `/openapi.json`. Assure-toi de respecter les statuts valides : 'A faire', 'En cours', 'Termine'."*
+> *"Tu es un Agent IA assistant personnel. Tu as accès à l'API de gestion des tâches de l'utilisateur. Pour piloter sa liste, tu dois faire des appels REST sur l'API en utilisant l'en-tête `X-API-Key: <VOTRE_CLE_API>`. Découvre les spécifications exactes de l'API en interrogeant `/openapi.json`. Assure-toi de respecter les statuts valides : 'A faire', 'En cours', 'Termine'."*

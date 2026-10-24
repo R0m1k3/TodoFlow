@@ -73,7 +73,7 @@
 
         <div class="setting-group">
           <label for="setting-api-key">Clé API (X-API-Key)</label>
-          <input type="password" id="setting-api-key" placeholder="widget-token-secure-789" required>
+          <input type="password" id="setting-api-key" placeholder="Clé API du serveur" required>
         </div>
 
         <div class="setting-toggle">
@@ -102,11 +102,6 @@
     </div>
   </div>
 
-  <!-- Intégration de l'API Tauri pour la communication inter-processus -->
-  <script>
-    // Import dynamique pour supporter l'exécution dans le navigateur pendant le dév
-    window.__TAURI__ = window.__TAURI__ || null;
-  </script>
   <!-- Modal de confirmation de suppression personnalisé (Thème Glassmorphism) -->
   <div class="confirm-modal-overlay" id="confirm-modal">
     <div class="confirm-modal-box">

@@ -12,7 +12,11 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": false,
+      "window": {
+        "hide": true,
+        "startDragging": true
+      }
     },
     "bundle": {
       "active": true,
@@ -47,7 +51,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' http: https:; object-src 'none'; base-uri 'self'; form-action 'none'"
     },
     "systemTray": {
       "iconPath": "icons/icon.ico",

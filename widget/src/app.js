@@ -8,7 +8,7 @@ const invoke = tauri ? tauri.invoke : null;
 // État local de l'application
 let state = {
   apiUrl: "http://localhost:8000",
-  apiKey: "widget-token-secure-789",
+  apiKey: "", // Aucune clé par défaut : à saisir dans les paramètres
   alwaysOnTop: false,
   autostart: false,
   opacity: 70,
@@ -111,6 +111,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Événement d'ajout de tâche
   addTaskForm.addEventListener("submit", handleAddTask);
   
+  // Sans clé API configurée, ouvrir directement les paramètres
+  if (!state.apiKey) {
+    settingsPanel.classList.add("open");
+  }
+
   // Démarrage de la synchronisation en temps réel (Polling toutes les 4 secondes)
   fetchTasks();
   state.pollingInterval = setInterval(fetchTasks, 4000);
